@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OWL - Learning Platform</title>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* ==========================================
+           RESET & VARIABLES
+           ========================================== */
+        :root {
+            --primary: #8b5cf6;
+            --primary-hover: #7c3aed;
+            --secondary: #ec4899;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --font-main: 'Outfit', sans-serif;
+            --success: #22c55e;
+            --success-bg: rgba(34, 197, 94, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==========================================
+           UTILITIES
+           ========================================== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex-grow: 1;
+        }
+
+        .btn {
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-icon {
+            background: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Background Grid Effect */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-size: 50px 50px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+        }
+
+        /* Glass Card Style */
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px -10px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Gradients */
+        .text-gradient {
+            background: linear-gradient(to right, #a78bfa, #f472b6, #f87171);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* ==========================================
+           NAVBAR
+           ========================================== */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .brand-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #a78bfa;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* ==========================================
+           HERO SECTION
+           ========================================== */
+        .hero {
+            text-align: center;
+            padding: 5rem 1rem;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-badge span {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #c084fc;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.6;
+        }
+
+        .cta-btn {
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            background-color: var(--primary);
+            color: white;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+        }
+
+        .cta-btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        /* ==========================================
+           SUBJECTS GRID
+           ========================================== */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            margin-top: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-divider {
+            height: 4px;
+            background: #1e293b;
+            flex-grow: 1;
+            margin-left: 1.5rem;
+            border-radius: 2px;
+        }
+
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .subject-card {
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .subject-icon-bg {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 1rem;
+            opacity: 0.1;
+            transform: scale(2.5);
+            transition: all 0.5s ease;
+        }
+
+        .subject-card:hover .subject-icon-bg {
+            opacity: 0.2;
+            transform: scale(3);
+        }
+
+        .subject-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        /* Icon Colors based on gradients */
+        .bg-orange { background: linear-gradient(135deg, #fb923c, #ef4444); }
+        .bg-blue { background: linear-gradient(135deg, #60a5fa, #06b6d4); }
+        .bg-green { background: linear-gradient(135deg, #4ade80, #059669); }
+        .bg-yellow { background: linear-gradient(135deg, #facc15, #f97316); }
+        .bg-pink { background: linear-gradient(135deg, #f472b6, #f43f5e); }
+        .bg-violet { background: linear-gradient(135deg, #a78bfa, #9333ea); }
+
+        .subject-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subject-card p {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .arrow-circle {
+            width: 32px;
+            height: 32px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .subject-card:hover .arrow-circle {
+            background: white;
+            color: black;
+        }
+
+        /* ==========================================
+           SUBJECT DETAIL PAGE
+           ========================================== */
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            margin-bottom: 2rem;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .back-btn:hover {
+            color: white;
+        }
+
+        .subject-header {
+            padding: 3px; /* Gradient border simulation */
+            border-radius: 24px;
+            margin-bottom: 2.5rem;
+        }
+
+        .subject-header-inner {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 22px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .subject-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .units-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .unit-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+        }
+
+        .unit-item.available {
+            border-left-color: var(--success);
+        }
+
+        .unit-item.pending {
+            border-left-color: #475569;
+        }
+
+        .unit-item:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .unit-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .unit-number {
+            width: 40px;
+            height: 40px;
+            background: #1e293b;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--text-muted);
+        }
+
+        .unit-item:hover .unit-number {
+            background: var(--primary);
+            color: white;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-badge.active {
+            background: var(--success-bg);
+            color: var(--success);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .status-badge.inactive {
+            background: #1e293b;
+            color: var(--text-muted);
+            border: 1px solid #334155;
+        }
+
+        .unit-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* ==========================================
+           ABOUT SECTION
+           ========================================== */
+        .about-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            padding: 3rem;
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .profile-frame {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            padding: 4px;
+            background: linear-gradient(to right, #a855f7, #ec4899);
+        }
+
+        .profile-img {
+            width: 100%;
+            height: 100%;
+            background: #0f172a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .about-content {
+            text-align: center;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* ==========================================
+           FOOTER
+           ========================================== */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 2rem 0;
+            margin-top: auto;
+            background: var(--bg-card);
+        }
+
+        .footer-content {
+            text-align: center;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .social-icon:hover {
+            transform: scale(1.1);
+        }
+        .social-icon.linkedin:hover { background: #0077b5; }
+        .social-icon.github:hover { background: #000; }
+        .social-icon.mail:hover { background: #ef4444; }
+
+        .copyright {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ==========================================
+           MODAL & TOAST
+           ========================================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #0f172a;
+            width: 100%;
+            max-width: 1024px;
+            height: 85vh;
+            border-radius: 16px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            padding: 1rem;
+            border-bottom: 1px solid #1e293b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-modal-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+        }
+        .close-modal-btn:hover { color: white; }
+
+        .modal-body {
+            flex-grow: 1;
+            position: relative;
+            background: #1e293b;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 10000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 17px;
+            border: 1px solid var(--secondary);
+            box-shadow: 0 0 15px var(--secondary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        /* ==========================================
+           ANIMATIONS
+           ========================================== */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float { animation: float 4s ease-in-out infinite; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+
+        /* ==========================================
+           MEDIA QUERIES
+           ========================================== */
+        @media (min-width: 768px) {
+            .hero h1 { font-size: 4.5rem; }
+            .mobile-menu-btn { display: none; }
+            .about-card { flex-direction: row; text-align: left; }
+            .about-content { text-align: left; }
+            .contact-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 767px) {
+            .nav-links { display: none; } /* Simplify for mobile demo */
+            .mobile-menu-btn { display: block; }
+            .section-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+            .section-divider { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Grid -->
+    <div class="bg-grid"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-brand" onclick="renderHome()">
+            <div class="brand-logo animate-float">
+                <i data-lucide="bird" width="24" height="24"></i>
+            </div>
+            <span class="brand-text text-gradient">OWL</span>
+        </div>
+        <div class="nav-links">
+            <button onclick="renderHome()" class="nav-link">Home</button>
+            <button onclick="scrollToSubjects()" class="nav-link">Subjects</button>
+            <button onclick="scrollToAbout()" class="nav-link">About</button>
+        </div>
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <i data-lucide="menu"></i>
+        </button>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="app" class="container">
+        <!-- Content injected via JS -->
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/kunam-mani-sai-charan-reddy-7a18b7284/?originalSubdomain=in" target="_blank" class="social-icon linkedin">
+                    <i data-lucide="linkedin" width="20" height="20"></i>
+                </a>
+                <a href="https://github.com/KUNAMMANISAICHARANREDDY" target="_blank" class="social-icon github">
+                    <i data-lucide="github" width="20" height="20"></i>
+                </a>
+                <a href="mailto:kunammanisaicharanreddy@gmail.com" class="social-icon mail">
+                    <i data-lucide="mail" width="20" height="20"></i>
+                </a>
+            </div>
+            <p class="copyright">© 2025 OWL Learning. All rights reserved.</p>
+            <p style="font-size: 0.85rem; background: linear-gradient(to right, #c084fc, #f472b6); -webkit-background-clip: text; color: transparent;">
+                Made with 🤎 by Kunam Mani Sai Charan Reddy 😎
+            </p>
+        </div>
+    </footer>
+
+    <!-- PDF Modal Overlay -->
+    <div id="pdfModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle" style="color: #d8b4fe; font-weight: 600;">Document Viewer</h3>
+                <button onclick="closePdfModal()" class="close-modal-btn">
+                    <i data-lucide="x" width="24" height="24"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="pdfLoader" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+                    <div style="border: 2px solid #8b5cf6; border-top: 2px solid transparent; border-radius: 50%; width: 48px; height: 48px; animation: spin 1s linear infinite;"></div>
+                    <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+                </div>
+                <iframe id="pdfFrame" src="" type="application/pdf" onload="document.getElementById('pdfLoader').style.display='none'"></iframe>
+                <div style="position: absolute; inset: 0; pointer-events: none;"></div>
+            </div>
+            <div style="padding: 8px; text-align: center; color: #64748b; font-size: 12px; background: #0f172a; border-top: 1px solid #1e293b;">
+                Read Only Mode active.
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i data-lucide="upload-cloud" color="#ec4899" width="32" height="32"></i>
+        <span>Uploading soon buddy...</span>
+    </div>
+
+    <script>
+        // ==========================================
+        // DATA MANAGEMENT (JSON)
+        // ==========================================
+        const courseData = {
+            "subjects": [
+                {
+                    "id": "epj",
+                    "name": "EPJ",
+                    "description": "Enterprise Programming with Java",
+                    "icon": "coffee",
+                    "bgClass": "bg-orange",
+                    "units": [
+                        { "title": "Unit 1: Foundation of Enterprise Programming", "pdf": "" },
+                        { "title": "Unit 2: Servlets", "pdf": "" },
+                        { "title": "Unit 3: JSP: Java Server Programming", "pdf": "" },
+                        { "title": "Unit 4: Hibernate (ORM)", "pdf": "" },
+                        { "title": "Unit 5: Spring", "pdf": "" },
+                        { "title": "Unit 6: Spring Boot", "pdf": "" }
+                    ]
+                },
+                {
+                    "id": "daa",
+                    "name": "DAA",
+                    "description": "Design and Analysis of Algorithms",
+                    "icon": "network",
+                    "bgClass": "bg-blue",
+                    "units": [
+                        { "title": "Unit 1: Introduction", "pdf": "" },
+                        { "title": "Unit 2: Divide and Conquer", "pdf": "" },
+                        { "title": "Unit 3: Greedy Method", "pdf": "" },
+                        { "title": "Unit 4: Dynamic Programming", "pdf": "" }
+                    ]
+                },
+                {
+                    "id": "math",
+                    "name": "Math",
+                    "description": "Quantum & Aptitude",
+                    "icon": "sigma",
+                    "bgClass": "bg-green",
+                    "units": [
+                        { "title": "Quantum Mechanics", "pdf": "" },
+                        { "title": "Aptitude Reasoning", "pdf": "" }
+                    ]
+                },
+                {
+                    "id": "aws",
+                    "name": "AWS",
+                    "description": "Amazon Web Services Cloud",
+                    "icon": "cloud",
+                    "bgClass": "bg-yellow",
+                    "units": [
+                        { "title": "Unit 1: Cloud Concepts", "pdf": "" },
+                        { "title": "Unit 2: EC2 & S3", "pdf": "" }
+                    ]
+                },
+                {
+                    "id": "toc",
+                    "name": "TOC",
+                    "description": "Theory of Computation",
+                    "icon": "binary",
+                    "bgClass": "bg-pink",
+                    "units": [
+                        { "title": "Unit 1: Finite Automata", "pdf": "" },
+                        { "title": "Unit 2: Context Free Grammars", "pdf": "" }
+                    ]
+                },
+                {
+                    "id": "dadv",
+                    "name": "DADv",
+                    "description": "Data Analytics & Visualization",
+                    "icon": "bar-chart-3",
+                    "bgClass": "bg-violet",
+                    "units": [
+                        { "title": "Unit 1: Data Preprocessing", "pdf": "" },
+                        { "title": "Unit 2: Visualization Techniques", "pdf": "" }
+                    ]
+                }
+            ]
+        };
+
+        const app = document.getElementById('app');
+
+        // ==========================================
+        // APP LOGIC
+        // ==========================================
+        function renderHome() {
+            app.innerHTML = `
+                <!-- Hero -->
+                <section class="hero fade-in">
+                    <div class="hero-badge">
+                        <span></span>
+                    </div>
+                    <h1 class="text-gradient">The OWL Platform</h1>
+                    <p>
+                        Your comprehensive resource for engineering subjects. 
+                        Curated by <span style="color: white; font-weight: 600;">Kunam Mani Sai Charan Reddy</span>.
+                    </p>
+                    <div>
+                        <button onclick="scrollToSubjects()" class="btn cta-btn">Explore Subjects</button>
+                    </div>
+                </section>
+
+                <!-- Subjects -->
+                <section id="subjects-section" class="fade-in">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i data-lucide="library" color="#c084fc"></i> Subjects
+                        </h2>
+                        <div class="section-divider"></div>
+                    </div>
+
+                    <div class="subjects-grid">
+                        ${courseData.subjects.map(subject => `
+                            <div class="glass-card subject-card" onclick="openSubject('${subject.id}')">
+                                <div class="subject-icon-bg">
+                                    <i data-lucide="${subject.icon}" width="100%" height="100%"></i>
+                                </div>
+                                <div class="subject-icon ${subject.bgClass}">
+                                    <i data-lucide="${subject.icon}" width="24" height="24"></i>
+                                </div>
+                                <h3>${subject.name}</h3>
+                                <p>${subject.description}</p>
+                                <div class="card-footer">
+                                    <span style="font-size: 0.85rem; color: #64748b;">${subject.units.length} Units</span>
+                                    <div class="arrow-circle">
+                                        <i data-lucide="arrow-right" width="16" height="16"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>
+
+                <!-- About -->
+                <section id="about-section">
+                    <div class="glass-card about-card">
+                        <div class="profile-frame">
+                            <div class="profile-img">
+                                <i data-lucide="user" width="80" height="80" color="#475569"></i>
+                            </div>
+                        </div>
+                        <div class="about-content">
+                            <h2 style="font-size: 2rem; margin-bottom: 1rem;">About the Creator</h2>
+                            <p style="color: #cbd5e1; margin-bottom: 1.5rem;">
+                                Hello! I am <strong>Kunam Mani Sai Charan Reddy</strong>. 
+                                I built OWL to simplify access to course materials like EPJ, DAA, and Math. 
+                                This platform uses advanced web technologies to render content efficiently.
+                            </p>
+                            <div class="contact-grid">
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <i data-lucide="mail" color="#a78bfa" width="16"></i>
+                                    kunammanisaicharanreddy@gmail.com
+                                </div>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <i data-lucide="code" color="#a78bfa" width="16"></i>
+                                    Full Stack Developer
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `;
+            lucide.createIcons();
+        }
+
+        function openSubject(subjectId) {
+            const subject = courseData.subjects.find(s => s.id === subjectId);
+            if (!subject) return;
+
+            window.scrollTo(0, 0);
+
+            app.innerHTML = `
+                <div class="fade-in" style="padding-top: 2rem;">
+                    <button onclick="renderHome()" class="back-btn">
+                        <i data-lucide="arrow-left" width="20"></i> Back to Home
+                    </button>
+
+                    <div class="subject-header ${subject.bgClass}">
+                        <div class="subject-header-inner">
+                            <h1 class="text-gradient">${subject.name}</h1>
+                            <p style="font-size: 1.2rem; color: #cbd5e1;">${subject.description}</p>
+                            <div style="position: absolute; top: -20px; right: -20px; opacity: 0.1; transform: rotate(15deg);">
+                                <i data-lucide="${subject.icon}" width="200" height="200"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+                        <i data-lucide="folder-open" color="#c084fc"></i> Study Units
+                    </h2>
+
+                    <div class="units-list">
+                        ${subject.units.map((unit, index) => `
+                            <div onclick="handleUnitClick('${unit.pdf}', '${unit.title}')" 
+                                 class="glass-card unit-item ${unit.pdf ? 'available' : 'pending'}">
+                                <div class="unit-info">
+                                    <div class="unit-number">${index + 1}</div>
+                                    <div>
+                                        <h3 style="font-weight: 600; margin-bottom: 4px;">${unit.title}</h3>
+                                        <span style="font-size: 0.75rem; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase;">
+                                            ${unit.pdf ? 'Ready to View' : 'Coming Soon'}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="unit-actions">
+                                    <span class="status-badge ${unit.pdf ? 'active' : 'inactive'}">
+                                        ${unit.pdf ? 'PDF Available' : 'Pending'}
+                                    </span>
+                                    <i data-lucide="chevron-right" width="20" color="#475569"></i>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // Logic for PDF / Upload Message
+        function handleUnitClick(pdfUrl, title) {
+            if (!pdfUrl || pdfUrl.trim() === "" || pdfUrl.startsWith("/Users")) {
+                showToast();
+            } else {
+                openPdfViewer(pdfUrl, title);
+            }
+        }
+
+        function showToast() {
+            const toast = document.getElementById("toast");
+            toast.className = "toast show";
+            setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+        function openPdfViewer(url, title) {
+            const modal = document.getElementById('pdfModal');
+            const frame = document.getElementById('pdfFrame');
+            const loader = document.getElementById('pdfLoader');
+            const modalTitle = document.getElementById('modalTitle');
+
+            modalTitle.innerText = title;
+            modal.classList.add('active');
+            
+            frame.src = url + "#toolbar=0"; 
+            loader.style.display = 'flex'; 
+        }
+
+        function closePdfModal() {
+            const modal = document.getElementById('pdfModal');
+            const frame = document.getElementById('pdfFrame');
+            modal.classList.remove('active');
+            frame.src = ""; 
+        }
+
+        function scrollToSubjects() {
+            const section = document.getElementById('subjects-section');
+            if (!section) {
+                renderHome();
+                setTimeout(() => document.getElementById('subjects-section').scrollIntoView({ behavior: 'smooth' }), 100);
+            } else {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function scrollToAbout() {
+            const section = document.getElementById('about-section');
+            if (!section) {
+                renderHome();
+                setTimeout(() => document.getElementById('about-section').scrollIntoView({ behavior: 'smooth' }), 100);
+            } else {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function toggleMobileMenu() {
+            scrollToSubjects();
+        }
+
+        // Init
+        renderHome();
+
+    </script>
+</body>
+</html>
